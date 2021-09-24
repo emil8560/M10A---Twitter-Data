@@ -15,7 +15,8 @@ import unicodedata
 #To add wait time between requests
 import time
 
-os.environ['TOKEN'] = 'AAAAAAAAAAAAAAAAAAAAAPUSUAEAAAAAkGR31V0H2zi3zzmPUHGlxdnfBys%3DVCAXoC5W2e9yH3RiaT0JIzN5jDI15Z6eisgb8owee0LW0dV4OJ'
+os.environ['TOKEN'] = \
+    'AAAAAAAAAAAAAAAAAAAAAPUSUAEAAAAAkGR31V0H2zi3zzmPUHGlxdnfBys%3DVCAXoC5W2e9yH3RiaT0JIzN5jDI15Z6eisgb8owee0LW0dV4OJ'
 
 def auth():
     return os.getenv('TOKEN')
@@ -40,12 +41,14 @@ def create_url(keyword, start_date, end_date, max_results=10):
     return (search_url, query_params)
 
 def connect_to_endpoint(url, headers, params, next_token = None):
-    params['next_token'] = next_token   #params object received from create_url function
+    # params object received from create_url function
+    params['next_token'] = next_token
     response = requests.request("GET", url, headers = headers, params = params)
     print("Endpoint Response Code: " + str(response.status_code))
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
     return response.json()
+
 
 #Inputs for the request
 bearer_token = auth()
