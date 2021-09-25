@@ -33,3 +33,16 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
             tokens.append(word.lemma_)  # Tilføj ordets lemma til tokens, hvis if-betingelse er opfyldt
 
     return (tokens)
+
+def convert_to_list(type, list, data): # Funktion der tilføjer elementer fra dataframe til en liste
+    for x in range(len(data)):
+        list.append(data.loc[x, type])
+
+convert_to_list('retweet_count',Retweets, tweetdata)
+convert_to_list('favorite_count',Likes, tweetdata)
+print(Retweets)
+print(Likes)
+
+
+
+
