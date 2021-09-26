@@ -42,7 +42,8 @@ convert_to_list('retweet_count',Retweets, tweetdata)
 convert_to_list('favorite_count',Likes, tweetdata)
 print(Retweets)
 print(Likes)
-
+print("antal posts med en retweets værdi:", len(Retweets))
+print("antal posts med en likes værdi:", len(Likes))
 
 
 
