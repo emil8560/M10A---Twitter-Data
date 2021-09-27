@@ -45,11 +45,18 @@ d = {'word':[], 'likes':[],'retweets':[],'comments':[],'n':[],
      'avg_likes':[],'avg_retweets':[],'avg_comments':[],'trafic':[]}
 df = pd.DataFrame(data=d)
 df
+stop_count = 0
+stop_value = 25
 
 for posts in range(len(tweetdata)):
     opdelt_tekst = tokenizer_spacy(tweetdata.loc[posts, 'full_text'])
     antal_likes = Likes[posts]
     antal_retweets = Retweets[posts]
+    #antal_comments = Comments[posts]
+    print(posts, "ud af ", len(tweetdata))
+    stop_count = stop_count + 1
+    if stop_count > stop_value:
+        break
     for index_words in range(len(opdelt_tekst)):
         ord = opdelt_tekst[index_words]
         # print(ord)
@@ -59,10 +66,33 @@ for posts in range(len(tweetdata)):
             df.loc[lenght, 'word'] = ord
             df.loc[lenght, 'likes'] = antal_likes
             df.loc[lenght, 'retweets'] = antal_retweets
+            #df.loc[lenght, 'comments'] = antal_comments
             df.loc[lenght, 'n'] = 1
-            print(df)
-            #row = df.loc[df['word'] == ord]
+        else:
+            row = df.index[df['word'] == ord]
+            add_likes = df.loc[row, 'likes'] + antal_likes
+            df.loc[row, 'likes'] = add_likes
+            add_retweets = df.loc[row, 'retweets'] + antal_retweets
+            df.loc[row, 'retweets'] = add_retweets
+            #add_comments = df.loc[row, 'comments'] + antal_comments
+            #df.loc[row, 'comments'] = add_comments
+            add_n = df.loc[row, 'n'] + 1
+            df.loc[row, 'n'] = add_n
 
+for n in range(len(df)):
+    row = df.index[n]
+    avg_likes = df.loc[row, 'likes'] / df.loc[row, 'n']
+    df.loc[row, 'avg_likes'] = avg_likes
+    avg_retweets = df.loc[row, 'retweets'] / df.loc[row, 'n']
+    df.loc[row, 'avg_retweets'] = avg_retweets
+    #avg_comments = df.loc[row, 'comments'] / df.loc[row, 'n']
+    #df.loc[row, 'avg_comments'] = avg_comments
+    trafic = df.loc[row, 'likes'] + df.loc[row, 'retweets'] # + df.loc[row, 'comments']
+    df.loc[row, 'trafic'] = trafic
+
+
+
+df.to_csv('nyt_data', float_format='%.0f')
 
 
 # print(Retweets)
