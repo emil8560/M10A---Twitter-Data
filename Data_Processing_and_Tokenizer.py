@@ -40,10 +40,36 @@ def convert_to_list(type, list, data): # Funktion der tilføjer elementer fra da
 
 convert_to_list('retweet_count',Retweets, tweetdata)
 convert_to_list('favorite_count',Likes, tweetdata)
-print(Retweets)
-print(Likes)
-print("antal posts med en retweets værdi:", len(Retweets))
-print("antal posts med en likes værdi:", len(Likes))
 
+d = {'word':[], 'likes':[],'retweets':[],'comments':[],'n':[],
+     'avg_likes':[],'avg_retweets':[],'avg_comments':[],'trafic':[]}
+df = pd.DataFrame(data=d)
+df
+
+for posts in range(len(tweetdata)):
+    opdelt_tekst = tokenizer_spacy(tweetdata.loc[posts, 'full_text'])
+    antal_likes = Likes[posts]
+    antal_retweets = Retweets[posts]
+    for index_words in range(len(opdelt_tekst)):
+        ord = opdelt_tekst[index_words]
+        # print(ord)
+        # print(df.loc[df['word'] == ord].empty)
+        if df.loc[df['word'] == ord].empty == True:
+            lenght = len(df) + 1
+            df.loc[lenght, 'word'] = ord
+            df.loc[lenght, 'likes'] = antal_likes
+            df.loc[lenght, 'retweets'] = antal_retweets
+            df.loc[lenght, 'n'] = 1
+            print(df)
+            #row = df.loc[df['word'] == ord]
+
+
+
+# print(Retweets)
+# print(Likes)
+# print("antal posts med en retweets værdi:", len(Retweets))
+# print("antal posts med en likes værdi:", len(Likes))
+#
+# print(tokenizer_spacy(tweetdata.loc[0, 'full_text']))
 
 
