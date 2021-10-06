@@ -28,9 +28,8 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
         if (len(word.lemma_) < 3):  # Ord må ikke være mindre end 3 karakterer - går videre til næste ord, hvis det er
             continue
         if (word.pos_ in pos_tags) and (
-                word.lemma_ not in stop_words):  # Tjek at ordets POS-tag indgår i listen af accepterede tags og at ordet ikke er stopord
-            # Bemærk at denne betingelse nås kun for dem, som ikke opfylder betingelserne fra de andre if-linjer
-            tokens.append(word.lemma_)  # Tilføj ordets lemma til tokens, hvis if-betingelse er opfyldt
+                word.lemma_ not in stop_words):
+            tokens.append(word.lemma_)
 
     return (tokens)
 
