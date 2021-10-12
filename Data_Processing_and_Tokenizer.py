@@ -1,17 +1,14 @@
 import pandas as pd
 import spacy
+import datetime
 
-tweetdata_path = "TestData/poltweets_sample.csv"
+tweetdata_path = "Data/parti_data.csv"
 tweetdata = pd.read_csv(tweetdata_path)
 nlp = spacy.load("da_core_news_sm") # Definerer model
-
-Posts = []
-Likes = []
-Retweets = []
-Comments = []
+proces_start = datetime.datetime.now()
 
 def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
-    custom_stops = ["ad", "af", "aldrig", "alene", "alle", "allerede", "alligevel", "alt", "altid", "anden", "andet",
+    custom_stops = ["dkpol","ad", "af", "aldrig", "alene", "alle", "allerede", "alligevel", "alt", "altid", "anden", "andet",
                     "andre", "at", "bag", "bare", "begge", "bl.a.", "blandt", "blev", "blive", "bliver", "burde",
                     "bør", "ca.", "da", "de", "dem", "den", "denne", "dens", "der", "derefter", "deres", "derfor",
                     "derfra", "deri", "dermed", "derpå", "derved", "det", "dette", "dig", "din", "dine", "disse",
@@ -59,16 +56,26 @@ def convert_to_list(type, list, data): # Funktion der tilføjer elementer fra da
     for x in range(len(data)):
         list.append(data.loc[x, type])
 
-def post_to_df(data: list, df, ):
+def post_to_df(data, df):
     stop_count = 0
-    stop_value = 6000
+    stop_value = 100000
+
+    Likes = []
+    Retweets = []
+    Comments = []
+
+    convert_to_list('retweet_count', Retweets, data)
+    convert_to_list('like_count', Likes, data)
+    convert_to_list('reply_count', Comments, data)
+
 
     for posts in range(len(data)):
-        opdelt_tekst = tokenizer_spacy(data.loc[posts, 'full_text'])
+        opdelt_tekst = tokenizer_spacy(data.loc[posts, 'text'])
         antal_likes = Likes[posts]
         antal_retweets = Retweets[posts]
-        # antal_comments = Comments[posts]
-        print(posts, "ud af ", len(data), "DataProcessing")
+        antal_comments = Comments[posts]
+        if posts % 10 == 0:
+            print(posts, "ud af ", len(data), "DataProcessing")
         stop_count = stop_count + 1
         if stop_count > stop_value:
             break
@@ -79,7 +86,7 @@ def post_to_df(data: list, df, ):
                 df.loc[lenght, 'word'] = ord
                 df.loc[lenght, 'likes'] = antal_likes
                 df.loc[lenght, 'retweets'] = antal_retweets
-                # df.loc[lenght, 'comments'] = antal_comments
+                df.loc[lenght, 'comments'] = antal_comments
                 df.loc[lenght, 'n'] = 1
             else:
                 row = df.index[df['word'] == ord]
@@ -87,55 +94,104 @@ def post_to_df(data: list, df, ):
                 df.loc[row, 'likes'] = add_likes
                 add_retweets = df.loc[row, 'retweets'] + antal_retweets
                 df.loc[row, 'retweets'] = add_retweets
-                # add_comments = df.loc[row, 'comments'] + antal_comments
-                # df.loc[row, 'comments'] = add_comments
+                add_comments = df.loc[row, 'comments'] + antal_comments
+                df.loc[row, 'comments'] = add_comments
                 add_n = df.loc[row, 'n'] + 1
                 df.loc[row, 'n'] = add_n
 
-def create_dataframe(name: str):
+def create_dataframe(name):
     d = {'word': [], 'likes': [], 'retweets': [], 'comments': [], 'n': [],
          'avg_likes': [], 'avg_retweets': [], 'avg_comments': [], 'trafic': [], 'party': []}
     name = pd.DataFrame(data=d)
-    return name
 
-def calc_average(df):
+
+def calc_average(df, parti):
     for n in range(len(df)):
-        print(n, "ud af", len(df), "Calc Avg")
+        if n % 10 == 0:
+            print(n, "ud af", len(df), "Calc Avg")
         row = df.index[n]
         avg_likes = df.loc[row, 'likes'] / df.loc[row, 'n']
         df.loc[row, 'avg_likes'] = avg_likes
         avg_retweets = df.loc[row, 'retweets'] / df.loc[row, 'n']
         df.loc[row, 'avg_retweets'] = avg_retweets
-        # avg_comments = df.loc[row, 'comments'] / df.loc[row, 'n']
-        # df.loc[row, 'avg_comments'] = avg_comments
+        avg_comments = df.loc[row, 'comments'] / df.loc[row, 'n']
+        df.loc[row, 'avg_comments'] = avg_comments
         trafic = df.loc[row, 'likes'] + df.loc[row, 'retweets']  # + df.loc[row, 'comments']
         df.loc[row, 'trafic'] = trafic
+        df.loc[row, 'party'] = parti
 
-def df_to_csv(df, name: str):
+def df_to_csv(df, name):
     df.to_csv(name, float_format='%.0f')
+    print(name, "saved")
 
+# ------- Parti Variable ---------
+DanskDf1995 = []
+LiberalAlliance = []
+KonservativeDK = []
+venstredk = []
+radikale = []
+Spolitik = []
+Enhedslisten = []
+All = []
 
+d = {'word': [], 'likes': [], 'retweets': [], 'comments': [], 'n': [],
+     'avg_likes': [], 'avg_retweets': [], 'avg_comments': [], 'trafic': [], 'party': []}
+
+DanskDf1995 = pd.DataFrame(data=d)
+LiberalAlliance = pd.DataFrame(data=d)
+KonservativeDK = pd.DataFrame(data=d)
+venstredk = pd.DataFrame(data=d)
+radikale = pd.DataFrame(data=d)
+Spolitik = pd.DataFrame(data=d)
+Enhedslisten = pd.DataFrame(data=d)
+All = pd.DataFrame(data=d)
+
+DanskDf1995_sorted = tweetdata[tweetdata['username'] == "DanskDf1995"]
+LiberalAlliance_sorted = tweetdata[tweetdata['username'] == "LiberalAlliance"]
+KonservativeDK_sorted = tweetdata[tweetdata['username'] == "KonservativeDK"]
+venstredk_sorted = tweetdata[tweetdata['username'] == "venstredk"]
+radikale_sorted = tweetdata[tweetdata['username'] == "radikale"]
+Spolitik_sorted = tweetdata[tweetdata['username'] == "Spolitik"]
+Enhedslisten_sorted = tweetdata[tweetdata['username'] == "Enhedslisten"]
+
+DanskDf1995_sorted.reset_index(inplace=True)
+LiberalAlliance_sorted.reset_index(inplace=True)
+KonservativeDK_sorted.reset_index(inplace=True)
+venstredk_sorted.reset_index(inplace=True)
+radikale_sorted.reset_index(inplace=True)
+Spolitik_sorted.reset_index(inplace=True)
+Enhedslisten_sorted.reset_index(inplace=True)
 
 # ---------- RUN TIME Main ------------
-convert_to_list('retweet_count',Retweets, tweetdata)
-convert_to_list('favorite_count',Likes, tweetdata)
 
 
+# post_to_df(DanskDf1995_sorted, DanskDf1995)
+# post_to_df(LiberalAlliance_sorted, LiberalAlliance)
+# post_to_df(KonservativeDK_sorted, KonservativeDK)
+# post_to_df(venstredk_sorted, venstredk)
+# post_to_df(radikale_sorted, radikale)
+# post_to_df(Spolitik_sorted, Spolitik)
+# post_to_df(Enhedslisten_sorted, Enhedslisten)
+post_to_df(tweetdata, All)
 
+# calc_average(DanskDf1995, "Danske Folkeparti")
+# calc_average(LiberalAlliance, "Liberal Alliance")
+# calc_average(KonservativeDK, "Konservative Folkeparti")
+# calc_average(venstredk, "Venstre")
+# calc_average(radikale, "Radikale")
+# calc_average(Spolitik, "Socialistisk Folkeparti")
+# calc_average(Enhedslisten, "Enhedslisten")
+calc_average(All, "All")
 
+# df_to_csv(DanskDf1995, "DF.csv")
+# df_to_csv(LiberalAlliance, "LA.csv")
+# df_to_csv(KonservativeDK, "konservative.csv")
+# df_to_csv(venstredk, "venstre.csv")
+# df_to_csv(radikale, "radikale.csv")
+# df_to_csv(Spolitik, "spolitik.csv")
+# df_to_csv(Enhedslisten, "enhedslisten.csv")
+df_to_csv(All, "All.csv")
 
-
-
-
-
-
-
-
-# print(Retweets)
-# print(Likes)
-# print("antal posts med en retweets værdi:", len(Retweets))
-# print("antal posts med en likes værdi:", len(Likes))
-#
-# print(tokenizer_spacy(tweetdata.loc[0, 'full_text']))
-
-
+proces_end = datetime.datetime.now()
+difference = proces_end - proces_start
+print("RunTime: ", difference)
