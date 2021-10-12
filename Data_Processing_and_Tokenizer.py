@@ -30,7 +30,9 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
                     "sig", "sige", "sin", "sine", "sit", "skal", "skulle", "som", "stadig", "stor", "store", "synes",
                     "syntes", "syv", "så", "sådan", "således", "tag", "tage", "temmelig", "thi", "ti", "tidligere",
                     "til", "tilbage", "tit", "to", "tre", "ud", "uden", "udover", "under", "undtagen", "var", "ved",
-                    "vi", "via", "vil", "ville", "vor", "vore", "vores", "vær", "være", "været", "øvrigt"]  
+                    "vi", "via", "vil", "ville", "vor", "vore", "vores", "vær", "være", "været", "øvrigt", "dag",
+                    "nyt", "mangen", "land", "gang", "rigtig", "reel", "flere", "stede", "bugt", "nej", "sted", "nytte",
+                     "tid", "vej", "hele", "klare", "tak", "gode"]
     default_stopwords = list(nlp.Defaults.stop_words)  # Indlæser prædefineret stopordsliste
     stop_words = default_stopwords + custom_stops  # Danner samlet stopordsliste
     pos_tags = ['PROPN', 'ADJ', 'NOUN']  # Definerer POS-tags som skal bevares: egenavne, adjektiver og navneord
@@ -43,6 +45,8 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
         if word.lemma_.startswith("@"):  # Ord må ikke starte med @ - går videre til næste ord, hvis det gør
             continue
         if word.lemma_.startswith("#"):  # Ord må ikke starte med # - går videre til næste ord, hvis det gør
+            continue
+        if word.lemma_.startswith("https:"):  # Ord må ikke starte med # - går videre til næste ord, hvis det gør
             continue
         if (len(word.lemma_) < 3):  # Ord må ikke være mindre end 3 karakterer - går videre til næste ord, hvis det er
             continue
