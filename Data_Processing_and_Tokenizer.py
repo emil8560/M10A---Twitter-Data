@@ -42,7 +42,10 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
     tokens = []
 
     for word in doc:  # Looper igennem hvert ord i tweet
-        if word.lemma_.startswith("@"):  # Ord må ikke starte med @ - går videre til næste ord, hvis det gør
+        if word.lemma_.startswith("@" or ".@"):  # Ord må ikke starte med @ - går videre til næste ord, hvis det gør
+            continue
+        if word.lemma_.startswith("1" or "2" or "3" or "4" or "5" or "6" or "7" or "8" or "9" or "0"):
+            # Ord må ikke starte med @ - går videre til næste ord, hvis det gør
             continue
         if word.lemma_.startswith("#"):  # Ord må ikke starte med # - går videre til næste ord, hvis det gør
             continue
@@ -169,31 +172,31 @@ Enhedslisten_sorted.reset_index(inplace=True)
 # ---------- RUN TIME Main ------------
 
 
-# post_to_df(DanskDf1995_sorted, DanskDf1995)
-# post_to_df(LiberalAlliance_sorted, LiberalAlliance)
-# post_to_df(KonservativeDK_sorted, KonservativeDK)
-# post_to_df(venstredk_sorted, venstredk)
-# post_to_df(radikale_sorted, radikale)
-# post_to_df(Spolitik_sorted, Spolitik)
-# post_to_df(Enhedslisten_sorted, Enhedslisten)
+post_to_df(DanskDf1995_sorted, DanskDf1995)
+post_to_df(LiberalAlliance_sorted, LiberalAlliance)
+post_to_df(KonservativeDK_sorted, KonservativeDK)
+post_to_df(venstredk_sorted, venstredk)
+post_to_df(radikale_sorted, radikale)
+post_to_df(Spolitik_sorted, Spolitik)
+post_to_df(Enhedslisten_sorted, Enhedslisten)
 post_to_df(tweetdata, All)
 
-# calc_average(DanskDf1995, "Danske Folkeparti")
-# calc_average(LiberalAlliance, "Liberal Alliance")
-# calc_average(KonservativeDK, "Konservative Folkeparti")
-# calc_average(venstredk, "Venstre")
-# calc_average(radikale, "Radikale")
-# calc_average(Spolitik, "Socialistisk Folkeparti")
-# calc_average(Enhedslisten, "Enhedslisten")
+calc_average(DanskDf1995, "Danske Folkeparti")
+calc_average(LiberalAlliance, "Liberal Alliance")
+calc_average(KonservativeDK, "Konservative Folkeparti")
+calc_average(venstredk, "Venstre")
+calc_average(radikale, "Radikale")
+calc_average(Spolitik, "Socialistisk Folkeparti")
+calc_average(Enhedslisten, "Enhedslisten")
 calc_average(All, "All")
 
-# df_to_csv(DanskDf1995, "DF.csv")
-# df_to_csv(LiberalAlliance, "LA.csv")
-# df_to_csv(KonservativeDK, "konservative.csv")
-# df_to_csv(venstredk, "venstre.csv")
-# df_to_csv(radikale, "radikale.csv")
-# df_to_csv(Spolitik, "spolitik.csv")
-# df_to_csv(Enhedslisten, "enhedslisten.csv")
+df_to_csv(DanskDf1995, "DF.csv")
+df_to_csv(LiberalAlliance, "LA.csv")
+df_to_csv(KonservativeDK, "konservative.csv")
+df_to_csv(venstredk, "venstre.csv")
+df_to_csv(radikale, "radikale.csv")
+df_to_csv(Spolitik, "spolitik.csv")
+df_to_csv(Enhedslisten, "enhedslisten.csv")
 df_to_csv(All, "All.csv")
 
 proces_end = datetime.datetime.now()
