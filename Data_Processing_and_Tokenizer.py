@@ -55,8 +55,7 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
             continue
         if (word.pos_ in pos_tags) and (
                 word.lemma_ not in stop_words):
-            tokens.append(word.lemma_)
-
+            tokens.append(word.lemma_.lower())
     return (tokens)
 
 def convert_to_list(type, list, data): # Funktion der tilføjer elementer fra dataframe til en liste
@@ -65,7 +64,7 @@ def convert_to_list(type, list, data): # Funktion der tilføjer elementer fra da
 
 def post_to_df(data, df):
     stop_count = 0
-    stop_value = 100000
+    stop_value = 10000000
 
     Likes = []
     Retweets = []
@@ -123,7 +122,7 @@ def calc_average(df, parti):
         df.loc[row, 'avg_retweets'] = avg_retweets
         avg_comments = df.loc[row, 'comments'] / df.loc[row, 'n']
         df.loc[row, 'avg_comments'] = avg_comments
-        trafic = df.loc[row, 'likes'] + df.loc[row, 'retweets']  # + df.loc[row, 'comments']
+        trafic = df.loc[row, 'avg_likes'] + df.loc[row, 'avg_retweets'] + df.loc[row, 'avg_comments']
         df.loc[row, 'trafic'] = trafic
         df.loc[row, 'party'] = parti
 
