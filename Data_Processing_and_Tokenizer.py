@@ -32,7 +32,7 @@ def tokenizer_spacy(text):  # Definerer funktion ud fra koden fra tidligere
                     "til", "tilbage", "tit", "to", "tre", "ud", "uden", "udover", "under", "undtagen", "var", "ved",
                     "vi", "via", "vil", "ville", "vor", "vore", "vores", "vær", "være", "været", "øvrigt", "dag",
                     "nyt", "mangen", "land", "gang", "rigtig", "reel", "flere", "stede", "bugt", "nej", "sted", "nytte",
-                     "tid", "vej", "hele", "klare", "tak", "gode"]
+                     "tid", "vej", "hele", "klare", "tak", "gode", "folk"]
     default_stopwords = list(nlp.Defaults.stop_words)  # Indlæser prædefineret stopordsliste
     stop_words = default_stopwords + custom_stops  # Danner samlet stopordsliste
     pos_tags = ['PROPN', 'ADJ', 'NOUN']  # Definerer POS-tags som skal bevares: egenavne, adjektiver og navneord
